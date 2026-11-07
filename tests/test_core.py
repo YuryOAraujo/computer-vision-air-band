@@ -137,8 +137,8 @@ class ProjectTests(unittest.TestCase):
         self.assertIsNone(observation_from_landmarks(landmarks, 640, 360).cursor)
 
     def test_cli_defaults_and_extension_options(self):
-        self.assertEqual(parse_args([]).version, "instructor")
-        self.assertEqual(parse_args(["--version", "starter"]).version, "starter")
+        self.assertEqual(parse_args([]).version, "starter")
+        self.assertEqual(parse_args(["--version", "instructor"]).version, "instructor")
         self.assertTrue(parse_args(["--version", "instructor", "--instrument", "drums", "--strike"]).strike)
 
 

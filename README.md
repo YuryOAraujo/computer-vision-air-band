@@ -23,10 +23,9 @@ também testam os sons. Para usar a webcam:
 Aponte o indicador para um pad. Abra polegar e indicador e aproxime-os para tocar.
 Segurar os dedos fechados toca uma única vez. Abra-os para tocar novamente.
 
-Com o ambiente virtual ativo, `python app.py` abre a demonstração completa quando
-a versão instructor está presente. Para as atividades da primeira noite, escolha
-explicitamente `python app.py --version starter`. Nos pacotes que contêm somente
-uma versão, essa é selecionada automaticamente.
+Com o ambiente virtual ativo, `python app.py` abre a versão starter. Para a
+demonstração completa, escolha `python app.py --version instructor`. Nos pacotes
+que contêm somente uma versão, essa é selecionada automaticamente.
 
 Também é possível usar `iniciar_windows.bat starter camera`,
 `iniciar_windows.bat day1 mouse` ou `iniciar_windows.bat instructor camera`.

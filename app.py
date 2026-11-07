@@ -8,9 +8,9 @@ def parse_args(argv=None):
     parser = argparse.ArgumentParser(description="Air Band Lab — instrumentos com gestos")
     available = [name for name in ("starter", "day1", "instructor")
                  if (Path(__file__).parent / "versions" / name / "project.py").is_file()]
-    default_version = "instructor" if "instructor" in available else available[0]
+    default_version = available[0]
     parser.add_argument("--version", choices=available, default=default_version,
-                        help="versao a executar; padrao: demonstracao completa quando disponivel")
+                        help=f"versao a executar; padrao: {default_version}")
     parser.add_argument("--input", choices=("camera", "mouse"), default="camera", dest="input_mode")
     parser.add_argument("--instrument", choices=("soundboard", "drums", "keyboard", "effects"), default="soundboard")
     parser.add_argument("--camera", type=int, default=0, help="indice da webcam, normalmente 0 ou 1")
