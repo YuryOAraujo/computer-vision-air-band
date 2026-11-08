@@ -3,7 +3,7 @@
 As 13 amostras WAV incluídas são sintetizadas pelo código original de
 `scripts/generate_sounds.py`; não são gravações nem amostras de terceiros.
 
-Substitua os arquivos pelos seus sons, preservando os nomes, ou altere `sound`
+Substitua os arquivos pelos seus sons, preservando os nomes, ou altere `som`
 nos pads. O programa deve ser reiniciado depois de trocar os arquivos.
 
 Formato recomendado: WAV PCM de 16 bits, 44.100 Hz, estéreo. Remova silêncio

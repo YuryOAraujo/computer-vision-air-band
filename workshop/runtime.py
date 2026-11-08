@@ -8,14 +8,19 @@ os.environ.setdefault("PYGAME_HIDE_SUPPORT_PROMPT", "1")
 import pygame
 
 from workshop.audio import AudioBank, SilentAudio
-from workshop.config import ROOT, validate_pads
+from workshop.config import ROOT, validar_areas
 from workshop.drawing import View
 from workshop.gestures import PinchGate, StrikeGate
 from workshop.tracking import CameraTracker, Observation
 
 
+# A linha de comando mantém seus nomes; o código das atividades usa português.
+INSTRUMENTOS = {"soundboard": "painel", "drums": "bateria",
+                "keyboard": "teclado", "effects": "efeitos"}
+
+
 def run(args):
-    project = importlib.import_module(f"versions.{args.version}.project")
+    projeto = importlib.import_module(f"versions.{args.version}.project")
     pygame.display.init()
     pygame.font.init()
     camera = None
@@ -27,13 +32,13 @@ def run(args):
                 raise RuntimeError("Audio indisponivel. Verifique a saida de som ou use --mute.") from error
         view = View(ROOT / "assets" / "images")
         instrument = args.instrument
-        pads = project.build_pads(instrument)
-        validate_pads(pads)
+        areas = projeto.criar_areas(INSTRUMENTOS[instrument])
+        validar_areas(areas)
         # A referência permite mudar de instrumento sem recarregar arquivos a cada toque.
-        all_pads = (sum((project.build_pads(name) for name in ("soundboard", "drums", "keyboard", "effects")), [])
-                    if args.version == "instructor" else pads)
+        todas_as_areas = (sum((projeto.criar_areas(nome) for nome in INSTRUMENTOS.values()), [])
+                          if args.version == "instructor" else areas)
         audio = (SilentAudio() if args.mute else
-                 AudioBank(ROOT / "assets" / "sounds", [pad["sound"] for pad in all_pads]))
+                 AudioBank(ROOT / "assets" / "sounds", [area["som"] for area in todas_as_areas]))
         if args.input_mode == "camera":
             camera = CameraTracker(ROOT / "models" / "hand_landmarker.task", args.camera)
 
@@ -60,8 +65,8 @@ def run(args):
                         running = False
                     elif pygame.K_1 <= event.key <= pygame.K_9:
                         index = event.key - pygame.K_1
-                        if index < len(pads):
-                            keyboard_hits.append(pads[index])
+                        if index < len(areas):
+                            keyboard_hits.append(areas[index])
                     elif event.key == pygame.K_r:
                         pinch.reset()
                         strike_gate.reset()
@@ -87,8 +92,8 @@ def run(args):
                 break
             if requested_instrument and requested_instrument != instrument:
                 instrument = requested_instrument
-                pads = project.build_pads(instrument)
-                validate_pads(pads)
+                areas = projeto.criar_areas(INSTRUMENTOS[instrument])
+                validar_areas(areas)
                 strike = False
                 height_volume = False
                 flashes.clear()
@@ -108,33 +113,33 @@ def run(args):
 
             # As duas funções abaixo são a ponte direta para o arquivo dos alunos.
             cursor = observation.cursor
-            selected = project.find_pad(pads, *cursor) if cursor is not None else None
-            pinch_started = pinch.update(observation.pinch_ratio, now)
-            volume = (project.volume_from_height(cursor[1])
+            area_selecionada = projeto.encontrar_area(areas, *cursor) if cursor is not None else None
+            pinca_iniciada = pinch.update(observation.pinch_ratio, now)
+            volume = (projeto.volume_pela_altura(cursor[1])
                       if height_volume and cursor is not None else 0.8)
             if strike:
-                struck_pad = strike_gate.update(cursor, pads, now)
-                sound = project.choose_sound(struck_pad, struck_pad is not None)
-                triggered_pad = struck_pad
+                area_batida = strike_gate.update(cursor, areas, now)
+                som = projeto.escolher_som(area_batida, area_batida is not None)
+                area_acionada = area_batida
             else:
-                sound = project.choose_sound(selected, pinch_started)
-                triggered_pad = selected
+                som = projeto.escolher_som(area_selecionada, pinca_iniciada)
+                area_acionada = area_selecionada
 
-            if sound is not None:
-                audio.play(sound, volume)
+            if som is not None:
+                audio.play(som, volume)
                 hit_count += 1
-                if triggered_pad is not None:
-                    flashes[triggered_pad["id"]] = now + 0.18
-            for pad in keyboard_hits:
-                audio.play(pad["sound"], volume)
-                flashes[pad["id"]] = now + 0.18
+                if area_acionada is not None:
+                    flashes[area_acionada["id"]] = now + 0.18
+            for area in keyboard_hits:
+                audio.play(area["som"], volume)
+                flashes[area["id"]] = now + 0.18
                 hit_count += 1
 
             status = ("BATIDA ATIVA" if cursor else "SEM CURSOR") if strike else pinch.status
             if args.input_mode == "mouse" and not strike:
                 status = "CLIQUE PARA TOCAR" if pinch.armed else "SOLTE O BOTAO" if cursor else "APONTE PARA O PAINEL"
-            view.render(project=project, version=args.version, instrument=instrument,
-                        pads=pads, selected=selected, cursor=cursor, observation=observation,
+            view.render(project=projeto, version=args.version, instrument=instrument,
+                        pads=areas, selected=area_selecionada, cursor=cursor, observation=observation,
                         rgb=rgb, flashes=flashes, now=now, status=status,
                         hit_count=hit_count, fps=clock.get_fps(), input_mode=args.input_mode,
                         strike=strike, height_volume=height_volume, muted=audio.muted,

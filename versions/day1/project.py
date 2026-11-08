@@ -1,32 +1,32 @@
-"""Checkpoint: painel completo da primeira noite, pronto para recuperar a aula."""
+"""Ponto de recuperação: painel completo da primeira noite."""
 
-TITLE = "Meu painel de sons"
-MISSION = "Aponte, feche a pinca e solte para tocar novamente."
+TITULO = "Meu painel de sons"
+MISSAO = "Aponte, feche a pinça e solte para tocar novamente."
 
 
-def build_pads(instrument="soundboard"):
+def criar_areas(instrumento="painel"):
     return [
-        {"id": "kick", "label": "BUMBO", "sound": "kick.wav",
-         "rect": (0.10, 0.20, 0.37, 0.29), "color": (55, 220, 190)},
-        {"id": "snare", "label": "CAIXA", "sound": "snare.wav",
-         "rect": (0.53, 0.20, 0.37, 0.29), "color": (255, 116, 142)},
-        {"id": "hihat", "label": "CHIMBAL", "sound": "hihat.wav",
-         "rect": (0.10, 0.56, 0.37, 0.29), "color": (255, 205, 97)},
-        {"id": "clap", "label": "PALMA", "sound": "clap.wav",
-         "rect": (0.53, 0.56, 0.37, 0.29), "color": (148, 144, 255)},
+        {"id": "bumbo", "rotulo": "BUMBO", "som": "kick.wav",
+         "retangulo": (0.10, 0.20, 0.37, 0.29), "cor": (55, 220, 190)},
+        {"id": "caixa", "rotulo": "CAIXA", "som": "snare.wav",
+         "retangulo": (0.53, 0.20, 0.37, 0.29), "cor": (255, 116, 142)},
+        {"id": "chimbal", "rotulo": "CHIMBAL", "som": "hihat.wav",
+         "retangulo": (0.10, 0.56, 0.37, 0.29), "cor": (255, 205, 97)},
+        {"id": "palma", "rotulo": "PALMA", "som": "clap.wav",
+         "retangulo": (0.53, 0.56, 0.37, 0.29), "cor": (148, 144, 255)},
     ]
 
 
-def find_pad(pads, x, y):
-    for pad in pads:
-        left, top, width, height = pad["rect"]
-        if left <= x < left + width and top <= y < top + height:
-            return pad
+def encontrar_area(areas, x, y):
+    for area in areas:
+        esquerda, topo, largura, altura = area["retangulo"]
+        if esquerda <= x < esquerda + largura and topo <= y < topo + altura:
+            return area
     return None
 
 
-def choose_sound(pad, pinch_started):
-    if pad is not None and pinch_started:
-        return pad["sound"]
+def escolher_som(area, pinca_iniciada):
+    if area is not None and pinca_iniciada:
+        return area["som"]
     return None
 

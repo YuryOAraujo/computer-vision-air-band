@@ -75,8 +75,8 @@ class View:
         screen.fill(BACKGROUND)
         self.text("AIR BAND", (24, 12), 36)
         self.text("LAB / TOP DE PROGRAMACAO", (236, 30), 15, ACCENT)
-        self.text(project.TITLE, (24, 62), 20)
-        self.text(project.MISSION, (24, 89), 15, MUTED)
+        self.text(project.TITULO, (24, 62), 20)
+        self.text(project.MISSAO, (24, 89), 15, MUTED)
         self.text(f"{hit_count:03d}  TOQUES", (903, 19), 20, ACCENT)
         self.text(f"{fps:02.0f} FPS  |  {'MUDO' if muted else 'SOM ATIVO'}", (903, 51), 13, MUTED)
 
@@ -105,19 +105,19 @@ class View:
         # Todo desenho de mão e pads é recortado na área do vídeo.
         screen.set_clip(STAGE)
         for index, pad in enumerate(pads):
-            x, y, width, height = pad["rect"]
+            x, y, width, height = pad["retangulo"]
             rectangle = pygame.Rect(STAGE.x + round(x * STAGE.width), STAGE.y + round(y * STAGE.height),
                                     round(width * STAGE.width), round(height * STAGE.height))
             active = flashes.get(pad["id"], -1) > now
             hovering = selected is not None and selected["id"] == pad["id"]
-            color = pad["color"]
+            color = pad["cor"]
             fill = pygame.Surface(rectangle.size, pygame.SRCALPHA)
             pygame.draw.rect(fill, (*color, 155 if active else 55 if hovering else 24), fill.get_rect(), border_radius=18)
             screen.blit(fill, rectangle)
             pygame.draw.rect(screen, color, rectangle, 4 if active else 3 if hovering else 1, border_radius=18)
-            if "image" in pad:
+            if "imagem" in pad:
                 side = max(24, min(rectangle.width // 3, rectangle.height // 3, 90))
-                screen.blit(self.image(pad["image"], (side, side)),
+                screen.blit(self.image(pad["imagem"], (side, side)),
                             (rectangle.centerx - side // 2, rectangle.centery - side - 6))
             else:
                 # Pequena forma de onda desenhada por código: nenhum asset necessário.
@@ -126,7 +126,7 @@ class View:
                     bx = rectangle.centerx - 35 + bar * 7
                     by = rectangle.centery - 35
                     pygame.draw.line(screen, color, (bx, by - amplitude), (bx, by + amplitude), 3)
-            self.text(pad["label"], (rectangle.centerx, rectangle.centery + 13),
+            self.text(pad["rotulo"], (rectangle.centerx, rectangle.centery + 13),
                       26 if rectangle.width > 200 else 20, center=True)
             self.text(f"[ {index + 1} ]", (rectangle.centerx, rectangle.bottom - 25), 15, color, center=True)
             if strike:

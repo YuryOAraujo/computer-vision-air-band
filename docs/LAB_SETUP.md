@@ -78,13 +78,13 @@ e caixas apenas nas demonstrações coletivas.
 | Câmera não abre | Feche Teams, navegador e outros consumidores de câmera; confira permissões de câmera para aplicativos de desktop no Windows; tente `--camera 1` |
 | Precisa continuar sem webcam | Use `--input mouse` |
 | O programa mostra apenas um pad e tarefas para completar | Está na versão starter; use `--version instructor` para a demonstração completa |
-| O starter não toca por gesto | Complete `find_pad` e `choose_sound`; use `1` para confirmar o áudio |
+| O starter não toca por gesto | Complete `encontrar_area` e `escolher_som`; use `1` para confirmar o áudio |
 | Rastreamento mostra mão, mas não toca | Abra polegar e indicador primeiro; verifique se o cursor está dentro do pad; ajuste iluminação e distância |
-| Dedos fechados repetem sons | Confira se `choose_sound` usa `pinch_started`; não use a condição de dedos fechados em todos os quadros |
+| Dedos fechados repetem sons | Confira se `escolher_som` usa `pinca_iniciada`; não use a condição de dedos fechados em todos os quadros |
 | Áudio não inicializa | Confira o dispositivo padrão do Windows e a conexão dos fones; `--mute` permite continuar a lógica |
 | Som perceptivelmente atrasado | Retire silêncio do início dos WAVs e teste saída com fio; ensaie eventual ajuste de buffer no `runtime.py` |
-| `Som nao carregado` | Faça `choose_sound` devolver um `sound` declarado nos pads; reinicie depois de alterar os arquivos |
-| `Imagem nao encontrada` | Confira `assets/images/` e a grafia de `image` no pad |
+| `Som nao carregado` | Faça `escolher_som` devolver um `som` declarado nos pads; reinicie depois de alterar os arquivos |
+| `Imagem nao encontrada` | Confira `assets/images/` e a grafia de `imagem` no pad |
 | Modelo ausente ou corrompido | Antes da aula, execute `scripts/prepare_model.py` com internet; a verificação SHA-256 confirma o arquivo |
 | `M` não ativa áudio | Se iniciou com `--mute`, reinicie sem essa opção |
 

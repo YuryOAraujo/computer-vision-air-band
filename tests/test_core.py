@@ -8,7 +8,7 @@ from app import parse_args
 from versions.day1 import project
 from versions.instructor import project as instructor
 from versions.starter import project as starter
-from workshop.config import validate_pads
+from workshop.config import validar_areas
 from workshop.gestures import PinchGate, StrikeGate
 from workshop.tracking import observation_from_landmarks
 
@@ -43,12 +43,12 @@ class PinchTests(unittest.TestCase):
 
     def test_a_pinch_cannot_play_again_by_moving_between_pads(self):
         gate = PinchGate()
-        pads = project.build_pads()
+        pads = project.criar_areas()
         sequence = [(0.2, 0.3, 1), (0.2, 0.3, 0.1), (0.6, 0.3, 0.1),
                     (0.6, 0.3, 1), (0.6, 0.3, 0.1)]
         sounds = []
         for index, (x, y, ratio) in enumerate(sequence):
-            sound = project.choose_sound(project.find_pad(pads, x, y), gate.update(ratio, index * 0.2))
+            sound = project.escolher_som(project.encontrar_area(pads, x, y), gate.update(ratio, index * 0.2))
             if sound:
                 sounds.append(sound)
         self.assertEqual(sounds, ["kick.wav", "snare.wav"])
@@ -56,23 +56,23 @@ class PinchTests(unittest.TestCase):
     def test_pinch_outside_a_pad_is_consumed(self):
         gate = PinchGate()
         gate.update(1, 0)
-        self.assertIsNone(project.choose_sound(None, gate.update(0.1, 0.2)))
+        self.assertIsNone(project.escolher_som(None, gate.update(0.1, 0.2)))
         self.assertFalse(gate.update(0.1, 0.4))
 
 
 class StrikeTests(unittest.TestCase):
     def setUp(self):
         self.gate = StrikeGate()
-        self.pads = instructor.build_pads("drums")
+        self.pads = instructor.criar_areas("bateria")
 
     def test_strike_requires_crossing_and_rearming(self):
         self.assertIsNone(self.gate.update((0.15, 0.3), self.pads, 0))
-        self.assertEqual(self.gate.update((0.15, 0.5), self.pads, 0.1)["id"], "kick")
+        self.assertEqual(self.gate.update((0.15, 0.5), self.pads, 0.1)["id"], "bumbo")
         self.assertIsNone(self.gate.update((0.15, 0.6), self.pads, 0.2))
         self.assertIsNone(self.gate.update((0.15, 0.42), self.pads, 0.3))
         self.assertIsNone(self.gate.update((0.15, 0.5), self.pads, 0.4))
         self.gate.update((0.15, 0.3), self.pads, 0.5)
-        self.assertEqual(self.gate.update((0.15, 0.5), self.pads, 0.6)["id"], "kick")
+        self.assertEqual(self.gate.update((0.15, 0.5), self.pads, 0.6)["id"], "bumbo")
 
     def test_reappearing_inside_pad_does_not_strike(self):
         self.gate.update((0.15, 0.3), self.pads, 0)
@@ -91,38 +91,38 @@ class StrikeTests(unittest.TestCase):
     def test_diagonal_trajectory_uses_crossing_position(self):
         self.gate.update((0.1, 0.3), self.pads, 0)
         pad = self.gate.update((0.39, 0.6), self.pads, 0.1)
-        self.assertEqual(pad["id"], "kick")
+        self.assertEqual(pad["id"], "bumbo")
 
 
 class ProjectTests(unittest.TestCase):
     def test_all_completed_layouts_have_working_centers_and_sounds(self):
-        for module, name in [(project, "soundboard")] + [(instructor, name) for name in
-                                                      ("soundboard", "drums", "keyboard", "effects")]:
-            pads = module.build_pads(name)
-            validate_pads(pads)
+        for module, name in [(project, "painel")] + [(instructor, name) for name in
+                                                      ("painel", "bateria", "teclado", "efeitos")]:
+            pads = module.criar_areas(name)
+            validar_areas(pads)
             for pad in pads:
-                x, y, width, height = pad["rect"]
-                selected = module.find_pad(pads, x + width / 2, y + height / 2)
+                x, y, width, height = pad["retangulo"]
+                selected = module.encontrar_area(pads, x + width / 2, y + height / 2)
                 self.assertIs(selected, pad)
-                self.assertEqual(module.choose_sound(selected, True), pad["sound"])
-                self.assertIsNone(module.choose_sound(selected, False))
-            self.assertIsNone(module.find_pad(pads, 0, 0))
+                self.assertEqual(module.escolher_som(selected, True), pad["som"])
+                self.assertIsNone(module.escolher_som(selected, False))
+            self.assertIsNone(module.encontrar_area(pads, 0, 0))
 
     def test_starter_runs_with_intentionally_incomplete_tasks(self):
-        pads = starter.build_pads()
-        validate_pads(pads)
-        self.assertIsNone(starter.find_pad(pads, 0.5, 0.5))
-        self.assertIsNone(starter.choose_sound(pads[0], True))
+        pads = starter.criar_areas()
+        validar_areas(pads)
+        self.assertIsNone(starter.encontrar_area(pads, 0.5, 0.5))
+        self.assertIsNone(starter.escolher_som(pads[0], True))
 
     def test_bad_layout_gives_an_actionable_error(self):
-        pad = dict(project.build_pads()[0], rect=(0.8, 0, 0.5, 0.5))
-        with self.assertRaisesRegex(ValueError, "rect"):
-            validate_pads([pad])
+        pad = dict(project.criar_areas()[0], retangulo=(0.8, 0, 0.5, 0.5))
+        with self.assertRaisesRegex(ValueError, "retangulo"):
+            validar_areas([pad])
 
     def test_volume_is_bounded(self):
-        self.assertEqual(instructor.volume_from_height(-1), 1)
-        self.assertEqual(instructor.volume_from_height(2), 0.2)
-        self.assertAlmostEqual(instructor.volume_from_height(0.5), 0.5)
+        self.assertEqual(instructor.volume_pela_altura(-1), 1)
+        self.assertEqual(instructor.volume_pela_altura(2), 0.2)
+        self.assertAlmostEqual(instructor.volume_pela_altura(0.5), 0.5)
 
     def test_ratio_uses_both_image_dimensions(self):
         landmarks = [SimpleNamespace(x=0.5, y=0.5) for _ in range(21)]

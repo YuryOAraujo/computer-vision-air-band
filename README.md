@@ -34,7 +34,7 @@ Também é possível usar `iniciar_windows.bat starter camera`,
 
 | Versão | Comando após `app.py` | O que editar |
 | --- | --- | --- |
-| Início | `--version starter` | `versions/starter/project.py`: dois TODOs principais, um pad |
+| Início | `--version starter` | `versions/starter/project.py`: duas funções para completar, um pad |
 | Final da noite 1 | `--version day1` | `versions/day1/project.py`: painel completo com quatro sons |
 | Referência do professor | `--version instructor` | `versions/instructor/project.py`: painel, bateria, teclado e efeitos |
 
@@ -45,6 +45,11 @@ funcionam. Não é um erro de instalação. Reinicie o programa após editar o c
 Todas as versões compartilham a pasta `workshop/`. Os pacotes gerados para alunos
 contêm essa infraestrutura e apenas a versão correspondente; não dependem das
 outras pastas de versões.
+
+O código das atividades usa português: `criar_areas`, `encontrar_area`,
+`escolher_som` e as chaves `rotulo`, `som`, `retangulo`, `cor` e `imagem`.
+Os exemplos dos guias seguem esses nomes. Consulte o [glossário](docs/GLOSSARY.md)
+para os termos de Python, nomes da infraestrutura e correspondências em inglês.
 
 ## Controles da referência
 
@@ -75,9 +80,10 @@ Leia nesta ordem:
 3. [Guia do professor](docs/TEACHER_GUIDE.md): roteiro, respostas, demonstrações e evolução dos instrumentos.
 4. [Caderno do aluno](docs/STUDENT_GUIDE.md): missões curtas e critérios de conclusão.
 5. [Plano do workshop](WORKSHOP_PLAN.md): agenda e objetivos pedagógicos.
+6. [Glossário](docs/GLOSSARY.md): vocabulário do código e termos em inglês.
 
 Os 13 sons de demonstração já estão incluídos e são gerados por código original.
-Troque os WAVs em `assets/sounds/` pelos seus arquivos ou altere `sound` nos pads.
+Troque os WAVs em `assets/sounds/` pelos seus arquivos ou altere `som` nos pads.
 Para adicionar PNGs aos instrumentos, consulte [assets/images/README.md](assets/images/README.md).
 
 ## Verificação e distribuição

@@ -21,6 +21,7 @@ def selected_files(stage, include_wheels):
     else:
         paths += [ROOT / "versions" / "__init__.py",
                   ROOT / "docs" / "STUDENT_GUIDE.md", ROOT / "docs" / "LAB_SETUP.md",
+                  ROOT / "docs" / "GLOSSARY.md",
                   ROOT / "scripts" / "prepare_model.py", ROOT / "scripts" / "generate_sounds.py"]
         directories += [f"versions/{stage}"]
     if include_wheels:

@@ -24,7 +24,7 @@ class AudioBank:
         if self.muted:
             return
         if filename not in self.sounds:
-            raise RuntimeError(f"Som nao carregado: {filename}. Confira build_pads e choose_sound.")
+            raise RuntimeError(f"Som nao carregado: {filename}. Confira criar_areas e escolher_som.")
         channel = self.pygame.mixer.find_channel(force=True)
         channel.set_volume(max(0.0, min(1.0, volume)))
         channel.play(self.sounds[filename])

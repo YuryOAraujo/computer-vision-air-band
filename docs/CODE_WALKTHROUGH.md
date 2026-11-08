@@ -7,6 +7,10 @@ precisa dominar para terminar a primeira noite: uma lista de dicionários e duas
 funções. A infraestrutura usa classes para manter estado e recursos, mas os alunos
 não precisam aprender orientação a objetos para concluir as atividades.
 
+As funções e os dados das atividades usam português. Os módulos de apoio mantêm
+alguns nomes internos em inglês; o [glossário](GLOSSARY.md) explica essa fronteira
+e o significado dos termos usados no código.
+
 Execute a referência com mouse antes de estudar a câmera:
 
 ```powershell
@@ -21,9 +25,9 @@ O desempenho real depende da câmera e do computador.
 ```mermaid
 flowchart LR
     A[Webcam ou mouse] --> B[Posição e medida da pinça]
-    B --> C[find_pad escolhe a região]
+    B --> C[encontrar_area escolhe a região]
     B --> D[PinchGate detecta início do gesto]
-    C --> E[choose_sound decide o áudio]
+    C --> E[escolher_som decide o áudio]
     D --> E
     E --> F[AudioBank reproduz]
     F --> G[View desenha resposta]
@@ -34,9 +38,9 @@ No `workshop/runtime.py`, procure o comentário **As duas funções abaixo**. Es
 trecho é a ponte para o arquivo escolhido por `--version`:
 
 ```python
-selected = project.find_pad(pads, *cursor) if cursor is not None else None
-pinch_started = pinch.update(observation.pinch_ratio, now)
-sound = project.choose_sound(selected, pinch_started)
+area_selecionada = projeto.encontrar_area(areas, *cursor) if cursor is not None else None
+pinca_iniciada = pinch.update(observation.pinch_ratio, now)
+som = projeto.escolher_som(area_selecionada, pinca_iniciada)
 ```
 
 `*cursor` entrega os dois valores da tupla como argumentos separados: `x` e `y`.
@@ -44,30 +48,32 @@ sound = project.choose_sound(selected, pinch_started)
 As câmeras e janelas ficam fora do arquivo de atividades para os alunos poderem
 experimentar sem precisar reconstruir a integração a cada etapa.
 
-## O formato de um pad
+## O formato de uma área sonora
+
+Cada região interativa é uma área sonora, que também pode ser um pad de bateria.
 
 ```python
 {
-    "id": "kick",
-    "label": "BUMBO",
-    "sound": "kick.wav",
-    "rect": (0.10, 0.20, 0.37, 0.29),
-    "color": (55, 220, 190),
+    "id": "bumbo",
+    "rotulo": "BUMBO",
+    "som": "kick.wav",
+    "retangulo": (0.10, 0.20, 0.37, 0.29),
+    "cor": (55, 220, 190),
 }
 ```
 
 - `id`: identificador único usado para lembrar animações e batidas.
-- `label`: texto desenhado no pad.
-- `sound`: arquivo dentro de `assets/sounds/`, carregado uma vez na inicialização.
-- `rect`: esquerda, topo, largura, altura, em coordenadas normalizadas.
-- `color`: RGB, cada canal entre 0 e 255.
-- `image`: campo opcional, nome de PNG dentro de `assets/images/`.
+- `rotulo`: texto desenhado no pad.
+- `som`: arquivo dentro de `assets/sounds/`, carregado uma vez na inicialização.
+- `retangulo`: esquerda, topo, largura, altura, em coordenadas normalizadas.
+- `cor`: RGB, cada canal entre 0 e 255.
+- `imagem`: campo opcional, nome de PNG dentro de `assets/images/`.
 
 Na tela, `(0, 0)` é o canto superior esquerdo do vídeo e `(1, 1)` é o inferior
 direito. Y cresce para baixo. O primeiro pad termina em `x = 0.47` e `y = 0.49`.
 Uma posição `(0.20, 0.30)` está dentro dele.
 
-`find_pad` usa o limite esquerdo/superior inclusivo e direito/inferior exclusivo.
+`encontrar_area` usa o limite esquerdo/superior inclusivo e direito/inferior exclusivo.
 Assim, dois pads adjacentes não reivindicam o mesmo ponto da borda. Evite
 sobreposição; se houver, o primeiro pad da lista ganha a seleção.
 
@@ -117,7 +123,7 @@ stateDiagram-v2
 Em `workshop/gestures.py`:
 
 - `armed` lembra se uma abertura já autorizou a próxima pinça.
-- `closed` registra a condição de fechamento; `pinch_started` é o evento de um único quadro.
+- `closed` registra a condição de fechamento; `pinca_iniciada` é o evento de um único quadro.
 - Dois limiares criam uma faixa neutra: valores entre `0.35` e `0.60` não mudam a autorização.
 - `last_trigger` e `cooldown` limitam acionamentos excessivamente próximos.
 - Uma pinça durante o cooldown é consumida: não dispara mais tarde só porque continuou fechada.
@@ -126,7 +132,7 @@ Em `workshop/gestures.py`:
 O evento é consumido mesmo fora dos pads. Fechar a pinça fora e entrar em uma região
 mantendo-a fechada não toca; é necessário soltar e fazer uma nova pinça.
 
-O aluno recebe `pinch_started` pronto para escrever a decisão em `choose_sound`.
+O aluno recebe `pinca_iniciada` pronto para escrever a decisão em `escolher_som`.
 Depois, você pode abrir a implementação do gate para explicar de onde veio esse
 booleano e por que o programa precisa lembrar algo do quadro anterior.
 
@@ -150,11 +156,13 @@ mouse/teclado consistentes no Windows.
 
 ### Teclado
 
-`build_pads("keyboard")` cria cinco retângulos altos e muda os arquivos para notas.
-O reconhecimento e `choose_sound` continuam iguais. Isso demonstra reutilização:
+`criar_areas("teclado")` cria cinco retângulos altos e muda os arquivos para notas.
+Na linha de comando, essa escolha continua sendo `--instrument keyboard`; a
+tabela `INSTRUMENTOS` no runtime faz a conversão para o valor em português.
+O reconhecimento e `escolher_som` continuam iguais. Isso demonstra reutilização:
 novos dados geram um instrumento diferente com as mesmas regras.
 
-Com `V`, `volume_from_height(y)` devolve `1 - y`, limitado de `0.2` a `1`. A nota
+Com `V`, `volume_pela_altura(y)` devolve `1 - y`, limitado de `0.2` a `1`. A nota
 recebe esse volume no momento de tocar; não é um controle contínuo de uma nota
 já em reprodução. As amostras são notas curtas, sem sustain ou acordes por múltiplos dedos.
 

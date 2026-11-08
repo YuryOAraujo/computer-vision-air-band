@@ -81,7 +81,7 @@ class StrikeGate:
         self.previous = (x, y, now)
         if previous is None:
             for pad in pads:
-                if y < pad["rect"][1] - self.margin:
+                if y < pad["retangulo"][1] - self.margin:
                     self.armed.add(pad["id"])
             return None
 
@@ -93,7 +93,7 @@ class StrikeGate:
             return None
 
         for pad in pads:
-            left, top, width, height = pad["rect"]
+            left, top, width, height = pad["retangulo"]
             pad_id = pad["id"]
             if y < top - self.margin:
                 self.armed.add(pad_id)

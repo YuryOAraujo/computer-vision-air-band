@@ -18,6 +18,10 @@ instrumento sem reescrever a câmera?”.
 
 ## Abertura: faça o resultado aparecer primeiro
 
+Use os mesmos nomes em português do código ao explicar as atividades: `areas`,
+`encontrar_area`, `escolher_som` e `pinca_iniciada`. O [glossário](GLOSSARY.md)
+relaciona esses nomes ao vocabulário em inglês e às palavras reservadas do Python.
+
 Nos primeiros dez minutos, apresente a referência já funcionando. Toque uma
 sequência curta na bateria e depois algumas notas no teclado. Convide alguém a
 experimentar. Mostre a mão, o cursor, a região selecionada e o som.
@@ -49,18 +53,18 @@ assunto antes de usar o programa.
 
 ### 2. Coordenadas e seleção
 
-Mostre `rect = (0.28, 0.28, 0.44, 0.48)` do starter. Peça que prevejam a borda
-direita: `0.72`. Depois mova o pad e compare. Explique que `width` é largura,
-não a coordenada da borda direita.
+Mostre `retangulo = (0.28, 0.28, 0.44, 0.48)` do starter. Peça que prevejam a borda
+direita: `0.72`. Depois mova o pad e compare. Explique que `largura` é uma medida
+horizontal; a coordenada da borda direita é `esquerda + largura`.
 
-Resposta de referência para `find_pad`:
+Resposta de referência para `encontrar_area`:
 
 ```python
-def find_pad(pads, x, y):
-    for pad in pads:
-        left, top, width, height = pad["rect"]
-        if left <= x < left + width and top <= y < top + height:
-            return pad
+def encontrar_area(areas, x, y):
+    for area in areas:
+        esquerda, topo, largura, altura = area["retangulo"]
+        if esquerda <= x < esquerda + largura and topo <= y < topo + altura:
+            return area
     return None
 ```
 
@@ -75,16 +79,16 @@ problemas que poderão ser depurados individualmente: seleção e acionamento.
 Resposta de referência:
 
 ```python
-def choose_sound(pad, pinch_started):
-    if pad is not None and pinch_started:
-        return pad["sound"]
+def escolher_som(area, pinca_iniciada):
+    if area is not None and pinca_iniciada:
+        return area["som"]
     return None
 ```
 
 Primeiro mostre a saída lógica: nome de um arquivo ou `None`. Depois explique que
 o runtime usa essa resposta para tocar e desenhar a animação.
 
-Deixe claro que `pinch_started` significa **começou uma nova pinça autorizada**,
+Deixe claro que `pinca_iniciada` significa **começou uma nova pinça autorizada**,
 não “os dedos estão fechados”. A robustez desse evento já vem preparada para que
 a primeira experiência não seja uma rajada de sons.
 
@@ -136,12 +140,12 @@ Continue no arquivo da dupla. Troque a lista de pads por cinco teclas. Um exempl
 de primeira tecla:
 
 ```python
-{"id": "C4", "label": "DO", "sound": "C4.wav",
- "rect": (0.075, 0.25, 0.155, 0.62), "color": (55, 220, 190)}
+{"id": "C4", "rotulo": "DÓ", "som": "C4.wav",
+ "retangulo": (0.075, 0.25, 0.155, 0.62), "cor": (55, 220, 190)}
 ```
 
 Para as próximas, avance X em `0.172` e use `D4`, `E4`, `G4`, `A4`. As funções
-`find_pad` e `choose_sound` permanecem iguais. O programa pode continuar sendo
+`encontrar_area` e `escolher_som` permanecem iguais. O programa pode continuar sendo
 executado com `--version starter` ou `--version day1`: o nome da versão seleciona
 o arquivo; o layout vem dos dados que a dupla editou.
 
@@ -171,16 +175,16 @@ versão. Não basta acrescentar `--height-volume` a uma versão starter/day1.
 .\.venv\Scripts\python.exe app.py --version instructor --instrument keyboard --height-volume
 ```
 
-Estude `volume_from_height`:
+Estude `volume_pela_altura`:
 
 ```python
-def volume_from_height(y):
+def volume_pela_altura(y):
     return max(0.2, min(1.0, 1.0 - y))
 ```
 
 Previsões: Y `0.2` dá volume `0.8`; Y `0.8` dá pelo menos `0.2`. O volume é
-definido no ataque de cada nota. No `runtime.py`, procure `volume_from_height`
-e mostre onde o resultado chega a `audio.play(sound, volume)`.
+definido no ataque de cada nota. No `runtime.py`, procure `volume_pela_altura`
+e mostre onde o resultado chega a `audio.play(som, volume)`.
 
 Desafio: inverter a direção e explicar a fórmula. Outra possibilidade é estabelecer
 três faixas discretas de volume usando `if`/`elif`.

@@ -17,6 +17,7 @@ import numpy as np
 import pygame
 
 from app import parse_args
+from versions.day1 import project as day1
 from workshop.audio import AudioBank
 from workshop.config import ROOT
 from workshop.drawing import HEIGHT, STAGE, WIDTH, View
@@ -56,6 +57,23 @@ class IntegrationTests(unittest.TestCase):
         self.assertAlmostEqual(cursor[1], 0.5, places=2)
         tab = (400 * width / WIDTH, 130 * height / HEIGHT)
         self.assertEqual(view.tab_at(tab), "keyboard")
+
+    def test_custom_image_uses_the_portuguese_area_key(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            image_dir = root / "assets" / "images"
+            image_dir.mkdir(parents=True)
+            image_path = image_dir / "bumbo.png"
+            image = pygame.Surface((32, 32), pygame.SRCALPHA)
+            image.fill((55, 220, 190, 180))
+            pygame.image.save(image, str(image_path))
+            areas = day1.criar_areas()
+            areas[0]["imagem"] = "bumbo.png"
+            with patch("workshop.runtime.ROOT", root), \
+                 patch.object(day1, "criar_areas", return_value=areas), \
+                 patch("pygame.image.load", wraps=pygame.image.load) as load:
+                run(parse_args(["--version", "day1", "--input", "mouse", "--mute", "--frames", "1"]))
+            load.assert_called_once_with(str(image_path))
 
     def test_mouse_pinch_path_plays_once_per_click(self):
         position = (STAGE.x + int(0.2 * STAGE.width), STAGE.y + int(0.3 * STAGE.height))
