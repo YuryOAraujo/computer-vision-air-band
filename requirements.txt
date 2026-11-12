@@ -1,6 +1,8 @@
+# Python 3.8.2 (64-bit), already installed in the school lab.
+# MediaPipe 0.10.9 provides CPython 3.8 wheels without JAX dependencies.
 # Only one OpenCV distribution: MediaPipe already requires the contrib build.
-mediapipe==1.2.2
-opencv-contrib-python==5.0.0.93
-numpy==2.2.6
+mediapipe==0.10.9
+opencv-contrib-python==4.9.0.80
+numpy==1.24.4
 pygame==2.6.1
 

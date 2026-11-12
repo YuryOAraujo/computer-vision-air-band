@@ -3,12 +3,13 @@
 from dataclasses import dataclass
 import math
 import os
+from typing import Optional
 
 
 @dataclass
 class Observation:
-    cursor: tuple | None
-    pinch_ratio: float | None
+    cursor: Optional[tuple]
+    pinch_ratio: Optional[float]
     landmarks: tuple = ()
 
 

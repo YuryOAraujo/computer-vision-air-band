@@ -2,15 +2,28 @@
 
 ## Antes de instalar
 
-Use Windows de 64 bits e Python 3.12 de 64 bits em todas as estações. Confira:
+Use Windows de 64 bits e o Python 3.8.2 de 64 bits já instalado nas estações.
+Não é necessário acessar a Microsoft Store nem reinstalar o Python. Versões
+posteriores da série 3.8 também são aceitas. Confira:
 
 ```powershell
-py -3.12 --version
-py -3.12 -c "import struct; print(struct.calcsize('P') * 8)"
+py -3.8 --version
+py -3.8 -c "import struct; print(struct.calcsize('P') * 8)"
 ```
 
 A segunda linha deve mostrar `64`. O Python do sistema pode ser outro; o comando
-`py -3.12` seleciona explicitamente a versão do workshop.
+`py -3.8` seleciona explicitamente a versão do workshop. Se `py` não estiver
+disponível, use o caminho do interpretador existente, por exemplo no PowerShell:
+
+```powershell
+& "C:\caminho\para\python.exe" --version
+& "C:\caminho\para\python.exe" -c "import struct; print(struct.calcsize('P') * 8)"
+```
+
+Se mostrar `32`, essa instalação não pode executar o MediaPipe usado aqui; será
+necessário obter Python de 64 bits com a equipe de TI. A série 3.8
+[não recebe atualizações desde outubro de 2024](https://www.python.org/downloads/release/python-382/);
+esta configuração aproveita a instalação existente na escola.
 
 O projeto executa o reconhecimento em CPU. Não exige instalação de CUDA nem
 configuração da RTX. Use uma pasta local com permissão de escrita, fora de pastas
@@ -21,15 +34,32 @@ de sincronização que possam interferir nos arquivos durante a aula.
 Execute `preparar_windows.bat`. Equivalente manual:
 
 ```powershell
-py -3.12 -m venv .venv
+py -3.8 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install --only-binary=:all: pip==25.0.1
 .\.venv\Scripts\python.exe -m pip install --only-binary=:all: -r requirements-lock.txt
 .\.venv\Scripts\python.exe scripts/generate_sounds.py
 .\.venv\Scripts\python.exe scripts/prepare_model.py
 .\.venv\Scripts\python.exe app.py --version instructor --input mouse
 ```
 
+O preparador procura `py -3.8` e depois uma instalação compatível no `PATH`,
+ignorando o atalho da Microsoft Store. Para informar o caminho diretamente:
+
+```powershell
+.\preparar_windows.bat "C:\caminho\para\python.exe"
+```
+
+No procedimento manual, também é possível substituir `py -3.8` por
+`& "C:\caminho\para\python.exe"`. Se já existir uma `.venv` criada com Python
+3.12, mova essa pasta para fora do projeto e execute a preparação novamente;
+o script recusa um ambiente de outra versão e não o apaga automaticamente.
+
 Não é necessário ativar o ambiente virtual ou alterar a política do PowerShell.
 Abra o projeto no VS Code e selecione `.\.venv\Scripts\python.exe` como interpretador.
+
+O preparador instala pip **25.0.1** dentro da `.venv`: ele ainda suporta Python
+3.8 e reconhece os wheels de OpenCV no Windows. O pip original do Python 3.8.2
+pode recusar esses arquivos. A instalação do Python do sistema não é alterada.
 
 As dependências diretas são MediaPipe Tasks, OpenCV contrib, NumPy e Pygame.
 Use somente a distribuição OpenCV fixada no arquivo; instalar outra distribuição
@@ -37,18 +67,24 @@ que também fornece `cv2` no mesmo ambiente pode causar conflitos.
 
 ## Preparação offline
 
-Em **uma estação Windows de 64 bits com Python 3.12**, após preparar o ambiente:
+Em **uma estação Windows de 64 bits com Python 3.8.2**, após preparar o ambiente:
 use o projeto completo ou o pacote instructor para esta etapa de distribuição.
 
 ```powershell
-.\.venv\Scripts\python.exe -m pip download --only-binary=:all: -r requirements-lock.txt -d wheelhouse
+.\.venv\Scripts\python.exe -m pip download --only-binary=:all: pip==25.0.1 -r requirements-lock.txt -d wheelhouse
 .\.venv\Scripts\python.exe scripts/package_workshop.py --include-wheels
 ```
 
-Os ZIPs incluirão os wheels, o modelo, os sons e o código. Nas outras estações,
+Os ZIPs incluirão os 24 wheels das dependências, o wheel do pip 25.0.1, o modelo,
+os sons e o código. Nas outras estações,
 extraia o pacote e execute `preparar_windows.bat`; a presença de `wheelhouse/` faz
 a instalação usar `--no-index`. O script do modelo apenas verifica o arquivo já
-presente. O Python 3.12 precisa estar instalado previamente em cada estação.
+presente. O Python 3.8 de 64 bits já instalado será usado para criar a `.venv`.
+
+Ao migrar da configuração anterior com Python 3.12, gere uma nova pasta
+`wheelhouse/` vazia e baixe novamente as dependências: os wheels e o lock antigos
+não servem para esta configuração. Inclua também `pip==25.0.1` no download;
+o preparador usa esse wheel antes de instalar as dependências, sem precisar de rede.
 
 **Não copie a pasta `.venv` entre computadores.** Os caminhos e binários do
 ambiente são específicos da instalação. Gere os wheels no Windows para o
@@ -73,8 +109,10 @@ e caixas apenas nas demonstrações coletivas.
 
 | Sintoma | Ação |
 | --- | --- |
-| `py` não foi encontrado | Reinstale Python 3.12 com o Python Launcher; confirme a instalação antes da aula |
-| `No matching distribution` | Confira Python 3.12 de 64 bits e o lock; não tente compilar dependências durante o workshop |
+| `py` não foi encontrado | Execute `preparar_windows.bat "C:\caminho\para\python.exe"` usando o Python 3.8 de 64 bits existente |
+| `python` abre a Microsoft Store | Informe o caminho real de `python.exe` ao preparador; ele também ignora esse atalho na busca automática |
+| Ambiente `.venv` de outra versão | Mova a `.venv` antiga para fora do projeto e execute a preparação com Python 3.8 de 64 bits |
+| `No matching distribution` | Confira Python 3.8.2 ou posterior da série 3.8, de 64 bits, o lock e wheels correspondentes; não tente compilar dependências durante o workshop |
 | Câmera não abre | Feche Teams, navegador e outros consumidores de câmera; confira permissões de câmera para aplicativos de desktop no Windows; tente `--camera 1` |
 | Precisa continuar sem webcam | Use `--input mouse` |
 | O programa mostra apenas um pad e tarefas para completar | Está na versão starter; use `--version instructor` para a demonstração completa |

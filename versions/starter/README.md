@@ -1,6 +1,8 @@
 # Air Band Lab — projeto inicial
 
-Execute `preparar_windows.bat` antes da aula. Requer Python 3.12 de 64 bits.
+Execute `preparar_windows.bat` antes da aula. Use Python 3.8.2 ou posterior da
+série 3.8, de 64 bits, já instalado na escola. Se necessário, informe o caminho:
+`preparar_windows.bat "C:\caminho\para\python.exe"`.
 
 ```powershell
 .\.venv\Scripts\python.exe app.py --version starter

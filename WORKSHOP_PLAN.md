@@ -94,7 +94,7 @@ Não é necessário ensinar treinamento de modelos, orientação a objetos ou pr
 
 ## Direção técnica proposta
 
-- **Python 3.12 de 64 bits:** candidato para a instalação padronizada, com versões das dependências fixadas depois do teste no Windows do laboratório.
+- **Python 3.8.2 de 64 bits:** aproveitar a instalação existente no laboratório, com dependências compatíveis fixadas e instalação offline por wheels; ensaiar no Windows antes da aula.
 - **OpenCV:** captura da webcam, recorte e espelhamento do vídeo.
 - **MediaPipe Tasks / Hand Landmarker:** estimativa dos pontos da mão a partir do modelo pré-treinado, salvo localmente.
 - **Pygame:** janela, texto, desenho dos instrumentos e mixer com sons carregados no início da aplicação e reprodução sem bloquear o processamento da câmera.

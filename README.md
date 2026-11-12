@@ -5,13 +5,20 @@ Material em português para 12 e 13/11/2026; duração total planejada de 5h50.
 
 ## Primeiro ensaio no Windows
 
-1. Instale **Python 3.12 de 64 bits**, com o Python Launcher (`py`).
+1. Use o **Python 3.8.2 de 64 bits já instalado no laboratório**. Também são aceitas
+   versões posteriores da série 3.8; não é necessário usar a Microsoft Store.
 2. Extraia ou copie o projeto para uma pasta local. Execute `preparar_windows.bat` antes da aula.
 3. Abra um terminal nessa pasta e execute a demonstração:
 
 ```powershell
 .\.venv\Scripts\python.exe app.py --version instructor --input mouse
 ```
+
+Se o preparador não encontrar o Python, informe o caminho da instalação existente:
+`preparar_windows.bat "C:\caminho\para\python.exe"`. Consulte o
+[guia do laboratório](docs/LAB_SETUP.md) para verificar a versão e preparar as
+dependências offline. Ao migrar de Python 3.12, mova a pasta `.venv` antiga para
+fora do projeto antes de executar a preparação novamente.
 
 Mova o mouse sobre um pad, solte o botão e clique para tocar. As teclas `1` a `5`
 também testam os sons. Para usar a webcam:
@@ -105,9 +112,13 @@ necessário. O ZIP instructor inclui as três versões e todo o material do prof
 
 ## Outros ambientes
 
-O alvo do evento é Windows com Python 3.12. Para desenvolver em Linux/macOS com
-Python 3.12, crie um ambiente virtual e instale `requirements-lock.txt`, depois
+O alvo do evento é Windows de 64 bits com Python 3.8.2. Para desenvolver em Linux
+x86_64 com Python 3.8, crie um ambiente virtual e instale `requirements-lock.txt`, depois
 execute `scripts/generate_sounds.py` e `scripts/prepare_model.py`.
+
+As dependências foram fixadas para Python 3.8; este lock não serve para Python
+3.12. A série 3.8 [encerrou o suporte em outubro de 2024](https://www.python.org/downloads/release/python-382/).
+Esta configuração atende às instalações existentes do laboratório.
 
 `requirements.txt` registra as dependências diretas; `requirements-lock.txt` fixa
 também as transitivas. O modelo local tem URL de versão fixa e verificação SHA-256.

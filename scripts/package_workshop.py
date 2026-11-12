@@ -27,6 +27,8 @@ def selected_files(stage, include_wheels):
     if include_wheels:
         if not (ROOT / "wheelhouse").is_dir() or not list((ROOT / "wheelhouse").glob("*.whl")):
             raise RuntimeError("wheelhouse ausente/vazio. Baixe as dependencias no Windows primeiro.")
+        if not (ROOT / "wheelhouse" / "pip-25.0.1-py3-none-any.whl").is_file():
+            raise RuntimeError("Inclua pip==25.0.1 no download para preparar Python 3.8.2 offline.")
         directories += ["wheelhouse"]
     for name in directories:
         paths.extend(path for path in (ROOT / name).rglob("*")
